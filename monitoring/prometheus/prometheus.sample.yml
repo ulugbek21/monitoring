@@ -9,7 +9,7 @@ scrape_configs:
     scrape_timeout: 5s
     static_configs:
       - targets: ['localhost:9090']
-        labels: {'host': 'prometheus.mon.missed.com', 'instance': 'prometheus.mon.missed.com'}
+        labels: {'host': 'prometheus', 'instance': 'prometheus'}
 
   - job_name: 'node'
     scrape_interval: 10s
