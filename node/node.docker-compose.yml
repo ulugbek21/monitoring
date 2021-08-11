@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  node-nodeexporter:
+    image: prom/node-exporter:v1.0.1
+    expose:
+      - 9100
+    restart: always
+    labels:
+      container_group: monitoring
+    ports: 
+      - ${NODE_EXPORTER_PORT:-9100}:9100
+  node-cadvisor:
+    image: google/cadvisor:v0.33.0
+    expose:
+      - 8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: always
+    labels:
+      container_group: monitoring
+    ports: 
+      - ${NODE_CADVISOR_PORT:-8080}:8080

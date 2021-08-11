@@ -1,0 +1,49 @@
+groups:
+  - name: NodeRules
+    rules:
+    - alert: InstanceDown
+      expr: up == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Instance is down"
+        description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+  
+    - alert: NodeOutOfDiskSpace
+      expr: (node_filesystem_avail_bytes{mountpoint="/"}  * 100) / node_filesystem_size_bytes{mountpoint="/"} < 10
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node out of disk space"
+        description: "Instance: {{ $labels.instance }}. Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+  
+    - alert: NodeHighCpuLoad
+      expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node high CPU load"
+        description: "Instance: {{ $labels.instance }}. CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+  
+    - alert: NodeUnusualNetworkThroughputOut
+      expr: sum by (instance) (irate(node_network_transmit_bytes_total[2m])) / 1024 / 1024 > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node unusual network throughput out"
+        description: "Instance: {{ $labels.instance }}. Node network interfaces are probably sending too much data (> 100 MB/s)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+    - alert: NodeRestarted
+      expr: (node_time_seconds - node_boot_time_seconds) < 300
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node restarted warning"
+        description: "Warning: Node '{{ $labels.host }}' was restarted at {{ $value }} seconds ago."
+
+    

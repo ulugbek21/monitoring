@@ -1,0 +1,60 @@
+global:
+  scrape_interval: 15s 
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus-server'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+        labels: {'host': 'prometheus.mon.missed.com', 'instance': 'prometheus.mon.missed.com'}
+
+  - job_name: 'node'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['master-nodeexporter:9100']
+        labels: {'host': 'master', 'instance': 'master-nodeexporter'}
+
+  - job_name: 'containers'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['master-cadvisor:8080']
+        labels: {'host': 'master', 'instance': 'master-cadvisor'}
+
+  - job_name: 'service'
+    scrape_interval: 60s
+    scrape_timeout: 15s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response. 
+    file_sd_configs:
+    - files:
+      - /etc/prometheus/service.yml
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: (.*)
+      target_label: __param_target
+      replacement: ${1}
+    - source_labels: [__address__]
+      regex: (.*)
+      target_label: service_url
+      replacement: ${1}
+    - source_labels: []
+      regex: .*
+      target_label: __address__
+      replacement: blackboxprober:9115
+
+rule_files:
+  - "/etc/prometheus/rules/node_rules.yml"
+  - "/etc/prometheus/rules/site_rules.yml"
+  - "/etc/prometheus/rules/container_rules.yml"
+  - "/etc/prometheus/rules/container_group_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']

@@ -1,0 +1,8 @@
+.env
+.env.dev
+config.yml
+monitoring/alertmanager/config.yml
+monitoring/prometheus/prometheus.yml
+monitoring/prometheus/service.yml
+storage/
+logging/filebeat/filebeat.yml

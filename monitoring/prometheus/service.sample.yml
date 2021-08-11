@@ -1,0 +1,9 @@
+- targets: ['http://google.com']
+  labels: 
+    service_name: 'google'
+    service_url: 'http://google.com'
+
+- targets: ['http://bing.com']
+  labels: 
+    service_name: 'bing'
+    service_url: 'http://bing.com'
