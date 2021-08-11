@@ -2,7 +2,7 @@ version: '3'
 
 services:
   node-nodeexporter:
-    image: prom/node-exporter:v1.0.1
+    image: prom/node-exporter:latest
     expose:
       - 9100
     restart: always
@@ -11,7 +11,7 @@ services:
     ports: 
       - ${NODE_EXPORTER_PORT:-9100}:9100
   node-cadvisor:
-    image: google/cadvisor:v0.33.0
+    image: google/cadvisor:latest
     expose:
       - 8080
     volumes:

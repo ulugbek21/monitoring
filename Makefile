@@ -3,6 +3,7 @@ CURRENT_DIR=$(shell pwd)
 export BASE_PROMETHEUS_PATH = $(if $(DOCKER_HOST),$(REMOTE_PROMETHEUS_PATH),$(LOCAL_PROMETHEUS_PATH))
 export BASE_ALERTMANAGER_PATH = $(if $(DOCKER_HOST),$(REMOTE_ALERTMANAGER_PATH),$(LOCAL_ALERTMANAGER_PATH))
 export BASE_BLACKBOXPROBER_PATH = $(if $(DOCKER_HOST),$(REMOTE_BLACKBOXPROBER_PATH),$(LOCAL_BLACKBOXPROBER_PATH))
+export BASE_GRAFANA_PATH = $(if $(DOCKER_HOST),$(REMOTE_GRAFANA_PATH),$(LOCAL_GRAFANA_PATH))
 
 ifneq (,$(wildcard ./.env))
 	include .env
@@ -12,6 +13,7 @@ sync:
 	docker-machine scp -d -r ./monitoring/prometheus/ $(SSH_USER)@$(MACHINE_NAME):$(REMOTE_PROMETHEUS_PATH)
 	docker-machine scp -d -r ./monitoring/alertmanager/ $(SSH_USER)@$(MACHINE_NAME):$(REMOTE_ALERTMANAGER_PATH)
 	docker-machine scp -d -r ./monitoring/blackboxprober/ $(SSH_USER)@$(MACHINE_NAME):$(REMOTE_BLACKBOXPROBER_PATH)
+	docker-machine scp -d -r ./monitoring/grafana/provisioning/ $(SSH_USER)@$(MACHINE_NAME):$(REMOTE_GRAFANA_PATH)
 
 up:
 	$(if $(DOCKER_HOST), make sync,)
