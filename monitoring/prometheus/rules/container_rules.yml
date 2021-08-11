@@ -10,15 +10,6 @@ groups:
           summary: "High CPU usage on container warning"
           description: "{{ $labels.name }} is using a LOT of CPU. CPU usage is {{ humanize $value}}%."
 
-      - alert: ElasticSearchEatingMemory
-        expr: sum(container_memory_rss{name=~"logging_elasticsearch_1"}) by (host, name) > 1200000000
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High memory usage on elastic search warning"
-          description: "{{ $labels.name }} is eating up a LOT of memory. Memory consumption of {{ $labels.name }} is at {{ humanize $value}}."
-
       - alert: PrometheusEatingMemory
         expr: sum(container_memory_rss{name=~"monitoring_prometheus_1"}) by (host, name) > 1200000000
         for: 5m
@@ -27,21 +18,3 @@ groups:
         annotations:
           summary: "High memory usage on prometheus warning"
           description: "{{ $labels.name }} is eating up a LOT of memory. Memory consumption of {{ $labels.name }} is at {{ humanize $value}}."
-
-      - alert: ContainerEatingMemory
-        expr: sum(container_memory_rss{name=~".+",name!="logging_elasticsearch_1",name!="monitoring_prometheus_1",name!="logging_logstash_1",name!="jconf-service-app",name!="jconf-notification-app",name!="jconf-booking-app",name!="jconf-gateway-app",name!="jconf-payment-app"}) by (host,name) > 700000000
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High memory usage on container warning"
-          description: "{{ $labels.name }} is eating up a LOT of memory. Memory consumption of {{ $labels.name }} is at {{ humanize $value}}."
-
-      - alert: ContainerDown
-        expr: absent(container_memory_usage_bytes{name="logging_elasticsearch_1"}) or absent(container_memory_usage_bytes{name="monitoring_prometheus_1"}) 
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Container down"
-          description: "Container with name '{{ $labels.name }}' is down for more than 5 minutes."
